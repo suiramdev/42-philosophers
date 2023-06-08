@@ -42,6 +42,5 @@ t_philosopher	*new_philosopher(size_t id, t_table *table)
 void	destroy_philosopher(t_philosopher *philosopher)
 {
 	pthread_mutex_destroy(&philosopher->fork);
-	pthread_detach(philosopher->thread);
 	free(philosopher);
 }

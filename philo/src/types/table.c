@@ -6,7 +6,7 @@
 /*   By: mnouchet <mnouchet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 14:26:15 by mnouchet          #+#    #+#             */
-/*   Updated: 2023/06/07 17:54:06 by mnouchet         ###   ########.fr       */
+/*   Updated: 2023/06/08 16:49:59 by mnouchet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,7 @@
 /// @param must_eat The number of times each philosopher must eat
 /// before the simulation ends
 /// @return The table created, or NULL if an error occured
-t_table	*setup_table(size_t n_philosophers, long long tt_die, long long tt_eat,
-	long long tt_sleep, long long must_eat)
+t_table	*setup_table(t_table_settings settings)
 {
 	t_table	*table;
 	size_t	i;
@@ -29,15 +28,11 @@ t_table	*setup_table(size_t n_philosophers, long long tt_die, long long tt_eat,
 	table = malloc(sizeof(t_table));
 	if (!table)
 		return (NULL);
-	table->tt_die = tt_die;
-	table->tt_eat = tt_eat;
-	table->tt_sleep = tt_sleep;
-	table->must_eat = must_eat;
-	table->t_start = now() + (n_philosophers / 2) * tt_eat;
-	table->n_philosophers = n_philosophers;
+	table->settings = settings;
+	table->t_start = now() + (settings.n_philosophers / 2) * settings.tt_eat;
 	i = 0;
 	table->philosophers = NULL;
-	while (i < n_philosophers)
+	while (i < settings.n_philosophers)
 	{
 		if (!add_philosopher(table, new_philosopher(i, table)))
 		{
@@ -90,5 +85,6 @@ void	destroy_table(t_table *table)
 		table->philosophers = table->philosophers->next;
 		destroy_philosopher(tmp);
 	}
+	pthread_mutex_destroy(&table->mutex);
 	free(table);
 }

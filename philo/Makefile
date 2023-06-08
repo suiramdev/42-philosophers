@@ -6,7 +6,7 @@
 #    By: mnouchet <mnouchet@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/06 22:19:57 by mnouchet          #+#    #+#              #
-#    Updated: 2023/04/13 16:07:06 by mnouchet         ###   ########.fr        #
+#    Updated: 2023/06/08 16:29:41 by mnouchet         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,11 +30,13 @@ NAME		:= philo
 INCS		:= includes
 
 SRCS_DIR	:= src
-SRCS		:= main.c				\
-			   routine.c			\
-			   types/philosopher.c	\
-			   types/table.c		\
-			   utils/strconv.c		\
+SRCS		:= main.c					\
+			   routine/philosopher.c	\
+			   routine/supervisor.c		\
+			   types/philosopher.c		\
+			   types/table.c			\
+			   utils/log.c				\
+			   utils/strconv.c			\
 			   utils/time.c
 
 SRCS		:= $(SRCS:%=$(SRCS_DIR)/%)

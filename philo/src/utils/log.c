@@ -1,24 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.h                                            :+:      :+:    :+:   */
+/*   log.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mnouchet <mnouchet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/05 18:03:10 by mnouchet          #+#    #+#             */
-/*   Updated: 2023/06/08 16:20:56 by mnouchet         ###   ########.fr       */
+/*   Created: 2023/06/08 16:20:21 by mnouchet          #+#    #+#             */
+/*   Updated: 2023/06/08 16:20:36 by mnouchet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UTILS_H
-# define UTILS_H
+#include "philo.h"
 
-# include "types.h"
-# include <stddef.h>
-
-void		log_action(t_philosopher *philosopher, char *action);
-long long	p_atoll(const char *str);
-long long	now(void);
-void		p_usleep(long long ms);
-
-#endif
+void	log_action(t_philosopher *philosopher, char *action)
+{
+	pthread_mutex_lock(&philosopher->table->mutex);
+	printf("%lld %zu %s\n", now() - philosopher->table->t_start,
+		philosopher->id, action);
+	pthread_mutex_unlock(&philosopher->table->mutex);
+}
