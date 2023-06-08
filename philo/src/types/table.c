@@ -1,0 +1,94 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   table.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mnouchet <mnouchet@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/04/06 14:26:15 by mnouchet          #+#    #+#             */
+/*   Updated: 2023/06/07 17:54:06 by mnouchet         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo.h"
+
+/// @brief Create a new table
+/// @param n_philosophers The number of philosophers at the table
+/// @param tt_die The time to die in milliseconds
+/// @param tt_eat The time to eat in milliseconds
+/// @param tt_sleep The time to sleep in milliseconds
+/// @param must_eat The number of times each philosopher must eat
+/// before the simulation ends
+/// @return The table created, or NULL if an error occured
+t_table	*setup_table(size_t n_philosophers, long long tt_die, long long tt_eat,
+	long long tt_sleep, long long must_eat)
+{
+	t_table	*table;
+	size_t	i;
+
+	table = malloc(sizeof(t_table));
+	if (!table)
+		return (NULL);
+	table->tt_die = tt_die;
+	table->tt_eat = tt_eat;
+	table->tt_sleep = tt_sleep;
+	table->must_eat = must_eat;
+	table->t_start = now() + (n_philosophers / 2) * tt_eat;
+	table->n_philosophers = n_philosophers;
+	i = 0;
+	table->philosophers = NULL;
+	while (i < n_philosophers)
+	{
+		if (!add_philosopher(table, new_philosopher(i, table)))
+		{
+			destroy_table(table);
+			return (NULL);
+		}
+		i++;
+	}
+	pthread_mutex_init(&table->mutex, NULL);
+	return (table);
+}
+
+/// @brief Add a philosopher to the table
+/// @param table The table to add the philosopher to
+/// @param philosopher The philosopher to add
+/// @return The philosopher added, or NULL if an error occured
+/// @note The philosopher is added at the end of the list, to the left of the
+/// last philosopher
+t_philosopher	*add_philosopher(t_table *table, t_philosopher *philosopher)
+{
+	t_philosopher	*last;
+
+	if (!philosopher)
+		return (NULL);
+	philosopher->table = table;
+	if (!table->philosophers)
+	{
+		table->philosophers = philosopher;
+		return (philosopher);
+	}
+	last = table->philosophers;
+	while (last->next)
+		last = last->next;
+	last->next = philosopher;
+	philosopher->neighbour_fork = &last->fork;
+	table->philosophers->neighbour_fork = &philosopher->fork;
+	return (philosopher);
+}
+
+/// @brief Destroy a table
+/// @param table The table to destroy
+/// @return void
+void	destroy_table(t_table *table)
+{
+	t_philosopher	*tmp;
+
+	while (table->philosophers)
+	{
+		tmp = table->philosophers;
+		table->philosophers = table->philosophers->next;
+		destroy_philosopher(tmp);
+	}
+	free(table);
+}
