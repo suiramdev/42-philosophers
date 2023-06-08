@@ -6,7 +6,7 @@
 /*   By: mnouchet <mnouchet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 16:15:16 by mnouchet          #+#    #+#             */
-/*   Updated: 2023/06/05 20:32:59 by mnouchet         ###   ########.fr       */
+/*   Updated: 2023/06/08 21:38:32 by mnouchet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,10 @@ t_philosopher	*new_philosopher(size_t id, t_table *table)
 		philosopher->state = THINKING;
 	philosopher->t_meal = table->t_start;
 	philosopher->meals = 0;
-	pthread_mutex_init(&philosopher->fork, NULL);
 	philosopher->neighbour_fork = NULL;
 	philosopher->next = NULL;
+	if (pthread_mutex_init(&philosopher->fork, NULL))
+		return (destroy_philosopher(philosopher), NULL);
 	return (philosopher);
 }
 

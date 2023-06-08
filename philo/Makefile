@@ -6,7 +6,7 @@
 #    By: mnouchet <mnouchet@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/06 22:19:57 by mnouchet          #+#    #+#              #
-#    Updated: 2023/06/08 16:29:41 by mnouchet         ###   ########.fr        #
+#    Updated: 2023/06/08 21:16:43 by mnouchet         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,7 @@ SRCS		:= main.c					\
 			   types/philosopher.c		\
 			   types/table.c			\
 			   utils/log.c				\
-			   utils/strconv.c			\
+			   utils/string.c			\
 			   utils/time.c
 
 SRCS		:= $(SRCS:%=$(SRCS_DIR)/%)

@@ -6,11 +6,12 @@
 /*   By: mnouchet <mnouchet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/04 17:41:47 by mnouchet          #+#    #+#             */
-/*   Updated: 2023/06/08 17:00:31 by mnouchet         ###   ########.fr       */
+/*   Updated: 2023/06/08 21:32:12 by mnouchet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+#include <stdbool.h>
 
 static void	join_threads(t_table *table, pthread_t supervisor,
 	t_philosopher *philosopher)
@@ -30,7 +31,7 @@ int	main(int argc, char **argv)
 	t_philosopher	*philosopher;
 	pthread_t		supervisor;
 
-	if (argc < 5)
+	if (argc != 5 && argc != 6)
 		return (EXIT_FAILURE);
 	table = setup_table((t_table_settings){
 			p_atoll(argv[1]), p_atoll(argv[2]),

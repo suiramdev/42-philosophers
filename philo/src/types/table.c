@@ -6,7 +6,7 @@
 /*   By: mnouchet <mnouchet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 14:26:15 by mnouchet          #+#    #+#             */
-/*   Updated: 2023/06/08 16:49:59 by mnouchet         ###   ########.fr       */
+/*   Updated: 2023/06/08 21:39:11 by mnouchet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@ t_table	*setup_table(t_table_settings settings)
 	t_table	*table;
 	size_t	i;
 
+	if (settings.n_philosophers < 1 || settings.tt_die < 1
+		|| settings.tt_eat < 1 || settings.tt_sleep < 1)
+		return (NULL);
 	table = malloc(sizeof(t_table));
 	if (!table)
 		return (NULL);
@@ -35,13 +38,11 @@ t_table	*setup_table(t_table_settings settings)
 	while (i < settings.n_philosophers)
 	{
 		if (!add_philosopher(table, new_philosopher(i, table)))
-		{
-			destroy_table(table);
-			return (NULL);
-		}
+			return (destroy_table(table), NULL);
 		i++;
 	}
-	pthread_mutex_init(&table->mutex, NULL);
+	if (pthread_mutex_init(&table->mutex, NULL))
+		return (destroy_table(table), NULL);
 	return (table);
 }
 
