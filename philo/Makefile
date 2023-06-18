@@ -77,7 +77,7 @@ $(BUILD_DIR)/%.o: $(SRCS_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@ $(CPPFLAGS)
 
 $(NAME): $(LIBS_TARGET) $(OBJS)
-	$(CC) $(OBJS) -o $(NAME) $(LDLIBS) $(LDFLAGS)
+	$(CC) $(OBJS) -fsanitize=thread -o $(NAME) $(LDLIBS) $(LDFLAGS)
 	echo "\033[0;32m✓ $@ READY\033[0m"
 
 clean:

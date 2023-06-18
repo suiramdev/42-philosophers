@@ -61,6 +61,8 @@ t_philosopher	*add_philosopher(t_table *table, t_philosopher *philosopher);
 void			pop_philosopher(t_table *table, t_philosopher *philosopher);
 void			destroy_table(t_table *table);
 t_philosopher	*new_philosopher(size_t id, t_table *table);
+pthread_mutex_t	*lower_fork(t_philosopher *philo);
+pthread_mutex_t	*higher_fork(t_philosopher *philo);
 void			destroy_philosopher(t_philosopher *philosopher);
 
 #endif

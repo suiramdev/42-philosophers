@@ -27,22 +27,22 @@ static bool	run_eat(t_philosopher *philosopher, t_table *table)
 	if (should_stop(table))
 		return (false);
 	log_action(philosopher, "is thinking");
-	pthread_mutex_lock(&philosopher->fork);
+	pthread_mutex_lock(lower_fork(philosopher));
 	log_action(philosopher, "has taken a fork");
 	if (philosopher->neighbour_fork == NULL || should_stop(table))
 	{
-		pthread_mutex_unlock(&philosopher->fork);
+		pthread_mutex_unlock(lower_fork(philosopher));
 		return (false);
 	}
-	pthread_mutex_lock(philosopher->neighbour_fork);
+	pthread_mutex_lock(higher_fork(philosopher));
 	log_action(philosopher, "has taken a fork");
 	log_action(philosopher, "is eating");
 	philosopher->t_meal = now();
 	philosopher->state = EATING;
 	philosopher->meals++;
 	p_usleep(table->settings.tt_eat);
-	pthread_mutex_unlock(&philosopher->fork);
-	pthread_mutex_unlock(philosopher->neighbour_fork);
+	pthread_mutex_unlock(higher_fork(philosopher));
+	pthread_mutex_unlock(lower_fork(philosopher));
 	return (true);
 }
 

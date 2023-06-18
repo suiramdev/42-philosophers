@@ -32,7 +32,7 @@ t_table	*setup_table(t_table_settings settings)
 	if (!table)
 		return (NULL);
 	table->settings = settings;
-	table->t_start = now() + (settings.n_philosophers / 2) * settings.tt_eat;
+	table->t_start = now() + 2000;
 	i = 0;
 	table->philosophers = NULL;
 	while (i < settings.n_philosophers)
