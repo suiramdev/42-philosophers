@@ -22,4 +22,6 @@
 # include <stdio.h>
 # include <pthread.h>
 
+# define WAITING_TIME 2000
+
 #endif
