@@ -38,7 +38,7 @@ static bool	run_eat(t_philosopher *philosopher, t_table *table)
 	pthread_mutex_lock(&philosopher->mutex);
 	pthread_mutex_lock(lower_fork(philosopher));
 	log_action(philosopher, "has taken a fork");
-	if (!higher_fork(philosopher) || should_stop(philosopher, table))
+	if (should_stop(philosopher, table))
 	{
 		pthread_mutex_unlock(lower_fork(philosopher));
 		pthread_mutex_unlock(&philosopher->mutex);
@@ -68,6 +68,16 @@ static bool	run_sleep(t_philosopher *philosopher, t_table *table)
 	return (true);
 }
 
+static void	die_lonely(t_philosopher *philosopher, t_table *table)
+{
+	log_action(philosopher, "is thinking");
+	log_action(philosopher, "has taken a fork");
+	log_action(philosopher, "died");
+	pthread_mutex_lock(&table->mutex);
+	table->stop = true;
+	pthread_mutex_unlock(&table->mutex);
+}
+
 /// @brief The philosopher's routine
 /// @param arg The routine's parameters (t_routine_
 /// @return void
@@ -79,6 +89,8 @@ void	*philosopher_routine(void *arg)
 	philosopher = (t_philosopher *)arg;
 	table = philosopher->table;
 	p_usleep(table->t_start - now());
+	if (!philosopher->next)
+		return (die_lonely(philosopher, table), NULL);
 	while (1)
 	{
 		if (philosopher->state == THINKING)
