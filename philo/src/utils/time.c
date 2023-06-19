@@ -27,13 +27,9 @@ long long	now(void)
 /// @param ms The amount of time to wait in milliseconds
 void	p_usleep(long long ms)
 {
-	long long	delay;
 	long long	start;
 
-	delay = ms / 10;
-	if (ms < 10)
-		delay = 1;
 	start = now();
-	while (now() - start < ms)
-		usleep(delay);
+	while (now() < start + ms)
+		usleep(500);
 }
