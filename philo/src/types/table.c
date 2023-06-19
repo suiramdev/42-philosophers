@@ -35,6 +35,7 @@ t_table	*setup_table(t_table_settings settings)
 	table->t_start = now() + WAITING_TIME;
 	i = 0;
 	table->philosophers = NULL;
+	table->stop = false;
 	while (i < settings.n_philosophers)
 	{
 		if (!add_philosopher(table, new_philosopher(i, table)))

@@ -29,7 +29,7 @@ static bool	run_eat(t_philosopher *philosopher, t_table *table)
 	log_action(philosopher, "is thinking");
 	pthread_mutex_lock(lower_fork(philosopher));
 	log_action(philosopher, "has taken a fork");
-	if (philosopher->neighbour_fork == NULL || should_stop(table))
+	if (!higher_fork(philosopher) || should_stop(table))
 	{
 		pthread_mutex_unlock(lower_fork(philosopher));
 		return (false);

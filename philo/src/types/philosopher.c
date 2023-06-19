@@ -42,6 +42,8 @@ t_philosopher	*new_philosopher(size_t id, t_table *table)
 /// @return The lower fork
 pthread_mutex_t	*lower_fork(t_philosopher *philo)
 {
+	if (!philo->neighbour_fork)
+		return (&philo->fork);
 	if (&philo->fork <= philo->neighbour_fork)
 		return (&philo->fork);
 	return (philo->neighbour_fork);
@@ -52,6 +54,8 @@ pthread_mutex_t	*lower_fork(t_philosopher *philo)
 /// @return The higher fork
 pthread_mutex_t	*higher_fork(t_philosopher *philo)
 {
+	if (!philo->neighbour_fork)
+		return (NULL);
 	if (&philo->fork <= philo->neighbour_fork)
 		return (philo->neighbour_fork);
 	return (&philo->fork);
