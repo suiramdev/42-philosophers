@@ -12,31 +12,21 @@
 
 #include "philo.h"
 
+static bool	should_stop(t_table *table)
+{
+	bool	stop;
+
+	pthread_mutex_lock(&table->mutex);
+	stop = table->stop;
+	pthread_mutex_unlock(&table->mutex);
+	return (stop);
+}
+
 static void	stop(t_table *table)
 {
 	pthread_mutex_lock(&table->mutex);
 	table->stop = true;
 	pthread_mutex_unlock(&table->mutex);
-}
-
-static long long	philo_t_meal(t_philosopher *philosopher)
-{
-	long long	t_meal;
-
-	pthread_mutex_lock(&philosopher->mutex);
-	t_meal = philosopher->t_meal;
-	pthread_mutex_unlock(&philosopher->mutex);
-	return (t_meal);
-}
-
-static long long	philo_meals(t_philosopher *philosopher)
-{
-	long long	meals;
-
-	pthread_mutex_lock(&philosopher->mutex);
-	meals = philosopher->meals;
-	pthread_mutex_unlock(&philosopher->mutex);
-	return (meals);
 }
 
 /// @brief The supervisor's routine
@@ -49,22 +39,21 @@ void	*supervisor_routine(void *arg)
 
 	table = (t_table *)arg;
 	p_usleep(table->t_start - now());
-	while (1)
+	while (!should_stop(table))
 	{
 		finished = 0;
 		philosopher = table->philosophers;
 		while (philosopher)
 		{
-			if (table->settings.tt_die <= now() - philo_t_meal(philosopher))
-				return (stop(table), log_action(philosopher, "died"), NULL);
+			pthread_mutex_lock(&philosopher->mutex);
 			if (table->settings.must_eat > 0
-				&& philo_meals(philosopher) >= table->settings.must_eat)
+				&& philosopher->meals >= table->settings.must_eat)
 				finished++;
+			pthread_mutex_unlock(&philosopher->mutex);
 			philosopher = philosopher->next;
 		}
 		if (finished == table->settings.n_philosophers)
 			return (stop(table), NULL);
-		usleep(1000);
 	}
 	return (NULL);
 }

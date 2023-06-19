@@ -12,25 +12,33 @@
 
 #include "philo.h"
 
-static bool	should_stop(t_table *table)
+static bool	should_stop(t_philosopher *philosopher, t_table *table)
 {
 	bool	stop;
 
 	pthread_mutex_lock(&table->mutex);
 	stop = table->stop;
 	pthread_mutex_unlock(&table->mutex);
+	if (!stop && table->settings.tt_die <= now() - philosopher->t_meal)
+	{
+		log_action(philosopher, "died");
+		pthread_mutex_lock(&table->mutex);
+		table->stop = true;
+		pthread_mutex_unlock(&table->mutex);
+		return (true);
+	}
 	return (stop);
 }
 
 static bool	run_eat(t_philosopher *philosopher, t_table *table)
 {
-	if (should_stop(table))
+	if (should_stop(philosopher, table))
 		return (false);
 	log_action(philosopher, "is thinking");
 	pthread_mutex_lock(&philosopher->mutex);
 	pthread_mutex_lock(lower_fork(philosopher));
 	log_action(philosopher, "has taken a fork");
-	if (!higher_fork(philosopher) || should_stop(table))
+	if (!higher_fork(philosopher) || should_stop(philosopher, table))
 	{
 		pthread_mutex_unlock(lower_fork(philosopher));
 		pthread_mutex_unlock(&philosopher->mutex);
@@ -51,7 +59,7 @@ static bool	run_eat(t_philosopher *philosopher, t_table *table)
 
 static bool	run_sleep(t_philosopher *philosopher, t_table *table)
 {
-	if (should_stop(table))
+	if (should_stop(philosopher, table))
 		return (false);
 	log_action(philosopher, "is sleeping");
 	philosopher->state = SLEEPING;
