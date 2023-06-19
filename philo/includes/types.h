@@ -50,6 +50,7 @@ typedef struct s_philosopher
 	long long				t_meal;
 	long long				meals;
 	pthread_t				thread;
+	pthread_mutex_t			mutex;
 	pthread_mutex_t			fork;
 	pthread_mutex_t			*neighbour_fork;
 	struct s_table			*table;

@@ -32,6 +32,8 @@ t_philosopher	*new_philosopher(size_t id, t_table *table)
 	philosopher->meals = 0;
 	philosopher->neighbour_fork = NULL;
 	philosopher->next = NULL;
+	if (pthread_mutex_init(&philosopher->mutex, NULL))
+		return (destroy_philosopher(philosopher), NULL);
 	if (pthread_mutex_init(&philosopher->fork, NULL))
 		return (destroy_philosopher(philosopher), NULL);
 	return (philosopher);
@@ -66,6 +68,7 @@ pthread_mutex_t	*higher_fork(t_philosopher *philo)
 /// @return void
 void	destroy_philosopher(t_philosopher *philosopher)
 {
+	pthread_mutex_destroy(&philosopher->mutex);
 	pthread_mutex_destroy(&philosopher->fork);
 	free(philosopher);
 }

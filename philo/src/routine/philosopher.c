@@ -27,11 +27,13 @@ static bool	run_eat(t_philosopher *philosopher, t_table *table)
 	if (should_stop(table))
 		return (false);
 	log_action(philosopher, "is thinking");
+	pthread_mutex_lock(&philosopher->mutex);
 	pthread_mutex_lock(lower_fork(philosopher));
 	log_action(philosopher, "has taken a fork");
 	if (!higher_fork(philosopher) || should_stop(table))
 	{
 		pthread_mutex_unlock(lower_fork(philosopher));
+		pthread_mutex_unlock(&philosopher->mutex);
 		return (false);
 	}
 	pthread_mutex_lock(higher_fork(philosopher));
@@ -43,6 +45,7 @@ static bool	run_eat(t_philosopher *philosopher, t_table *table)
 	p_usleep(table->settings.tt_eat);
 	pthread_mutex_unlock(higher_fork(philosopher));
 	pthread_mutex_unlock(lower_fork(philosopher));
+	pthread_mutex_unlock(&philosopher->mutex);
 	return (true);
 }
 

@@ -19,6 +19,26 @@ static void	stop(t_table *table)
 	pthread_mutex_unlock(&table->mutex);
 }
 
+static long long	philo_t_meal(t_philosopher *philosopher)
+{
+	long long	t_meal;
+
+	pthread_mutex_lock(&philosopher->mutex);
+	t_meal = philosopher->t_meal;
+	pthread_mutex_unlock(&philosopher->mutex);
+	return (t_meal);
+}
+
+static long long	philo_meals(t_philosopher *philosopher)
+{
+	long long	meals;
+
+	pthread_mutex_lock(&philosopher->mutex);
+	meals = philosopher->meals;
+	pthread_mutex_unlock(&philosopher->mutex);
+	return (meals);
+}
+
 /// @brief The supervisor's routine
 /// @param arg The routine's parameters (t_table) @return void
 void	*supervisor_routine(void *arg)
@@ -35,15 +55,16 @@ void	*supervisor_routine(void *arg)
 		philosopher = table->philosophers;
 		while (philosopher)
 		{
-			if (table->settings.tt_die <= now() - philosopher->t_meal)
+			if (table->settings.tt_die <= now() - philo_t_meal(philosopher))
 				return (stop(table), log_action(philosopher, "died"), NULL);
 			if (table->settings.must_eat > 0
-				&& philosopher->meals >= table->settings.must_eat)
+				&& philo_meals(philosopher) >= table->settings.must_eat)
 				finished++;
 			philosopher = philosopher->next;
 		}
 		if (finished == table->settings.n_philosophers)
 			return (stop(table), NULL);
+		usleep(1000);
 	}
 	return (NULL);
 }
