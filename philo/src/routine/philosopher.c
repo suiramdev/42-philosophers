@@ -89,7 +89,7 @@ void	*philosopher_routine(void *arg)
 	philosopher = (t_philosopher *)arg;
 	table = philosopher->table;
 	p_usleep(table->t_start - now());
-	if (!philosopher->next)
+	if (!philosopher->neighbour_fork)
 		return (die_lonely(philosopher, table), NULL);
 	while (1)
 	{
