@@ -1,28 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.h                                            :+:      :+:    :+:   */
+/*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mnouchet <mnouchet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/05 17:59:23 by mnouchet          #+#    #+#             */
-/*   Updated: 2023/06/22 16:49:14 by mnouchet         ###   ########.fr       */
+/*   Created: 2023/06/22 16:05:21 by mnouchet          #+#    #+#             */
+/*   Updated: 2023/06/22 16:06:24 by mnouchet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_H
-# define PHILO_H
+#include "philo.h"
 
-# include "types.h"
-# include "utils.h"
-# include "routine.h"
-# include <stdlib.h>
-# include <sys/time.h>
-# include <unistd.h>
-# include <stdio.h>
-# include <pthread.h>
+bool	should_stop(t_table *table)
+{
+	bool	stop;
 
-# define WAITING_TIME 2000
-# define ENABLE_COLORS 1
+	pthread_mutex_lock(&table->mutex);
+	stop = table->stop;
+	pthread_mutex_unlock(&table->mutex);
+	return (stop);
+}
 
-#endif
+void	stop(t_table *table)
+{
+	pthread_mutex_lock(&table->mutex);
+	table->stop = true;
+	pthread_mutex_unlock(&table->mutex);
+}

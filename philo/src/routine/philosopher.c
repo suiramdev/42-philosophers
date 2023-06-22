@@ -6,62 +6,36 @@
 /*   By: mnouchet <mnouchet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 16:19:34 by mnouchet          #+#    #+#             */
-/*   Updated: 2023/06/08 16:54:58 by mnouchet         ###   ########.fr       */
+/*   Updated: 2023/06/22 16:51:09 by mnouchet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static bool	should_stop(t_philosopher *philosopher, t_table *table)
-{
-	bool	stop;
-
-	pthread_mutex_lock(&table->mutex);
-	stop = table->stop;
-	pthread_mutex_unlock(&table->mutex);
-	if (!stop && table->settings.tt_die <= now() - philosopher->t_meal)
-	{
-		log_action(philosopher, "died");
-		pthread_mutex_lock(&table->mutex);
-		table->stop = true;
-		pthread_mutex_unlock(&table->mutex);
-		return (true);
-	}
-	return (stop);
-}
-
 static bool	run_eat(t_philosopher *philosopher, t_table *table)
 {
-	if (should_stop(philosopher, table))
-		return (false);
-	log_action(philosopher, "is thinking");
-	pthread_mutex_lock(&philosopher->mutex);
+	log_action(philosopher, "is thinking", BLUE);
 	pthread_mutex_lock(lower_fork(philosopher));
-	log_action(philosopher, "has taken a fork");
-	if (should_stop(philosopher, table))
-	{
-		pthread_mutex_unlock(lower_fork(philosopher));
-		pthread_mutex_unlock(&philosopher->mutex);
-		return (false);
-	}
+	log_action(philosopher, "has taken a fork", WHITE);
 	pthread_mutex_lock(higher_fork(philosopher));
-	log_action(philosopher, "has taken a fork");
-	log_action(philosopher, "is eating");
-	philosopher->t_meal = now();
+	log_action(philosopher, "has taken a fork", WHITE);
+	log_action(philosopher, "is eating", YELLOW);
 	philosopher->state = EATING;
-	philosopher->meals++;
-	p_usleep(table->settings.tt_eat);
-	pthread_mutex_unlock(higher_fork(philosopher));
-	pthread_mutex_unlock(lower_fork(philosopher));
+	pthread_mutex_lock(&philosopher->mutex);
+	philosopher->t_meal = now();
 	pthread_mutex_unlock(&philosopher->mutex);
+	pthread_mutex_unlock(lower_fork(philosopher));
+	p_usleep(table->settings.tt_eat);
+	pthread_mutex_lock(&philosopher->mutex);
+	philosopher->meals++;
+	pthread_mutex_unlock(&philosopher->mutex);
+	pthread_mutex_unlock(higher_fork(philosopher));
 	return (true);
 }
 
 static bool	run_sleep(t_philosopher *philosopher, t_table *table)
 {
-	if (should_stop(philosopher, table))
-		return (false);
-	log_action(philosopher, "is sleeping");
+	log_action(philosopher, "is sleeping", MAGENTA);
 	philosopher->state = SLEEPING;
 	p_usleep(table->settings.tt_sleep);
 	philosopher->state = THINKING;
@@ -70,9 +44,9 @@ static bool	run_sleep(t_philosopher *philosopher, t_table *table)
 
 static void	die_lonely(t_philosopher *philosopher, t_table *table)
 {
-	log_action(philosopher, "is thinking");
-	log_action(philosopher, "has taken a fork");
-	log_action(philosopher, "died");
+	log_action(philosopher, "is thinking", BLUE);
+	log_action(philosopher, "has taken a fork", WHITE);
+	log_action(philosopher, "died", RED);
 	pthread_mutex_lock(&table->mutex);
 	table->stop = true;
 	pthread_mutex_unlock(&table->mutex);
@@ -91,7 +65,7 @@ void	*philosopher_routine(void *arg)
 	p_usleep(table->t_start - now());
 	if (!philosopher->neighbour_fork)
 		return (die_lonely(philosopher, table), NULL);
-	while (1)
+	while (!should_stop(table))
 	{
 		if (philosopher->state == THINKING)
 		{

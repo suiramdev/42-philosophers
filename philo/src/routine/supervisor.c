@@ -6,27 +6,30 @@
 /*   By: mnouchet <mnouchet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 16:19:35 by mnouchet          #+#    #+#             */
-/*   Updated: 2023/06/08 16:57:49 by mnouchet         ###   ########.fr       */
+/*   Updated: 2023/06/22 16:47:10 by mnouchet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static bool	should_stop(t_table *table)
+static long long	get_meals(t_philosopher *philosopher)
 {
-	bool	stop;
+	long long	meals;
 
-	pthread_mutex_lock(&table->mutex);
-	stop = table->stop;
-	pthread_mutex_unlock(&table->mutex);
-	return (stop);
+	pthread_mutex_lock(&philosopher->mutex);
+	meals = philosopher->meals;
+	pthread_mutex_unlock(&philosopher->mutex);
+	return (meals);
 }
 
-static void	stop(t_table *table)
+static long long	get_t_meal(t_philosopher *philosopher)
 {
-	pthread_mutex_lock(&table->mutex);
-	table->stop = true;
-	pthread_mutex_unlock(&table->mutex);
+	long long	t_meal;
+
+	pthread_mutex_lock(&philosopher->mutex);
+	t_meal = philosopher->t_meal;
+	pthread_mutex_unlock(&philosopher->mutex);
+	return (t_meal);
 }
 
 /// @brief The supervisor's routine
@@ -35,7 +38,7 @@ void	*supervisor_routine(void *arg)
 {
 	t_table			*table;
 	t_philosopher	*philosopher;
-	size_t			finished;
+	bool			finished;
 
 	table = (t_table *)arg;
 	p_usleep(table->t_start - now());
@@ -45,14 +48,16 @@ void	*supervisor_routine(void *arg)
 		philosopher = table->philosophers;
 		while (philosopher)
 		{
-			pthread_mutex_lock(&philosopher->mutex);
-			if (table->settings.must_eat > 0
-				&& philosopher->meals >= table->settings.must_eat)
-				finished++;
-			pthread_mutex_unlock(&philosopher->mutex);
+			if (table->settings.tt_die < now() - get_t_meal(philosopher))
+			{
+				log_action(philosopher, "died", RED);
+				return (stop(table), NULL);
+			}
+			if (table->settings.must_eat > 0)
+				finished = get_meals(philosopher) >= table->settings.must_eat;
 			philosopher = philosopher->next;
 		}
-		if (finished == table->settings.n_philosophers)
+		if (finished)
 			return (stop(table), NULL);
 	}
 	return (NULL);
