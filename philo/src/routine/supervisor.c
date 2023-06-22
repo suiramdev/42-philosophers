@@ -38,7 +38,7 @@ void	*supervisor_routine(void *arg)
 {
 	t_table			*table;
 	t_philosopher	*philosopher;
-	bool			finished;
+	size_t			finished;
 
 	table = (t_table *)arg;
 	p_usleep(table->t_start - now());
@@ -53,11 +53,11 @@ void	*supervisor_routine(void *arg)
 				log_action(philosopher, "died", RED);
 				return (stop(table), NULL);
 			}
-			if (table->settings.must_eat > 0)
-				finished = get_meals(philosopher) >= table->settings.must_eat;
+			if (table->settings.must_eat > 0 && get_meals(philosopher) >= table->settings.must_eat)
+				finished++;
 			philosopher = philosopher->next;
 		}
-		if (finished)
+		if (finished == table->settings.n_philosophers)
 			return (stop(table), NULL);
 	}
 	return (NULL);
