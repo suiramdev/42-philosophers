@@ -30,10 +30,10 @@ t_table	*new_table(t_table_settings settings)
 		return (NULL);
 	table->settings = settings;
 	table->t_start = now() + WAITING_TIME;
-	i = 0;
+	i = 1;
 	table->philosophers = NULL;
 	table->stop = false;
-	while (i < settings.n_philosophers)
+	while (i <= settings.n_philosophers)
 	{
 		if (!add_philosopher(table, new_philosopher(i, table)))
 			return (destroy_table(table), NULL);

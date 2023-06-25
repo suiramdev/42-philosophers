@@ -15,21 +15,22 @@
 static bool	run_eat(t_philosopher *philosopher, t_table *table)
 {
 	log_action(philosopher, "is thinking", BLUE);
-	pthread_mutex_lock(lower_fork(philosopher));
+	p_usleep(5);
+	pthread_mutex_lock(&philosopher->fork);
 	log_action(philosopher, "has taken a fork", WHITE);
-	pthread_mutex_lock(higher_fork(philosopher));
+	pthread_mutex_lock(philosopher->neighbour_fork);
 	log_action(philosopher, "has taken a fork", WHITE);
 	log_action(philosopher, "is eating", YELLOW);
 	philosopher->state = EATING;
 	pthread_mutex_lock(&philosopher->mutex);
 	philosopher->t_meal = now();
 	pthread_mutex_unlock(&philosopher->mutex);
-	pthread_mutex_unlock(lower_fork(philosopher));
+	pthread_mutex_unlock(philosopher->neighbour_fork);
 	p_usleep(table->settings.tt_eat);
 	pthread_mutex_lock(&philosopher->mutex);
 	philosopher->meals++;
 	pthread_mutex_unlock(&philosopher->mutex);
-	pthread_mutex_unlock(higher_fork(philosopher));
+	pthread_mutex_unlock(&philosopher->fork);
 	return (true);
 }
 
