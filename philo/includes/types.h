@@ -57,7 +57,7 @@ typedef struct s_philosopher
 	struct s_philosopher	*next;
 }	t_philosopher;
 
-t_table			*setup_table(t_table_settings settings);
+t_table			*new_table(t_table_settings settings);
 t_philosopher	*add_philosopher(t_table *table, t_philosopher *philosopher);
 void			pop_philosopher(t_table *table, t_philosopher *philosopher);
 void			destroy_table(t_table *table);

@@ -11,7 +11,36 @@
 /* ************************************************************************** */
 
 #include "philo.h"
-#include <stdbool.h>
+#include "types.h"
+
+static t_table_settings	*table_settings(int argc, char **argv)
+{
+	t_table_settings	*settings;
+
+	if (argc < 5 || argc > 6)
+	{
+		write(STDERR_FILENO, "Error: wrong number of arguments\n", 33);
+		return (NULL);
+	}
+	settings = malloc(sizeof(t_table_settings));
+	if (!settings)
+		return (NULL);
+	settings->n_philosophers = p_atoll(argv[1]);
+	settings->tt_die = p_atoll(argv[2]);
+	settings->tt_eat = p_atoll(argv[3]);
+	settings->tt_sleep = p_atoll(argv[4]);
+	settings->must_eat = 0;
+	if (argc == 6)
+		settings->must_eat = p_atoll(argv[5]);
+	if (settings->n_philosophers < 1 || settings->tt_die < 1
+		|| settings->tt_eat < 1 || settings->tt_sleep < 1
+		|| (argc == 6 && settings->must_eat < 1))
+	{
+		write(STDERR_FILENO, "Error: wrong arguments\n", 23);
+		return (free(settings), NULL);
+	}
+	return (settings);
+}
 
 static void	join_threads(t_table *table, pthread_t supervisor,
 	t_philosopher *philosopher)
@@ -27,19 +56,17 @@ static void	join_threads(t_table *table, pthread_t supervisor,
 
 int	main(int argc, char **argv)
 {
-	t_table			*table;
-	t_philosopher	*philosopher;
-	pthread_t		supervisor;
+	t_table_settings	*settings;
+	t_table				*table;
+	t_philosopher		*philosopher;
+	pthread_t			supervisor;
 
-	if (argc != 5 && argc != 6)
+	settings = table_settings(argc, argv);
+	if (!settings)
 		return (EXIT_FAILURE);
-	table = setup_table((t_table_settings){
-			p_atoll(argv[1]), p_atoll(argv[2]),
-			p_atoll(argv[3]), p_atoll(argv[4]), 0});
+	table = new_table(*settings);
 	if (!table)
-		return (EXIT_FAILURE);
-	if (argc == 6)
-		table->settings.must_eat = p_atoll(argv[5]);
+		return (free(settings), EXIT_FAILURE);
 	philosopher = table->philosophers;
 	while (philosopher)
 	{
@@ -50,5 +77,6 @@ int	main(int argc, char **argv)
 	pthread_create(&supervisor, NULL, supervisor_routine, table);
 	join_threads(table, supervisor, philosopher);
 	destroy_table(table);
+	free(settings);
 	return (EXIT_SUCCESS);
 }

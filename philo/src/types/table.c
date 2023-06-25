@@ -20,14 +20,11 @@
 /// @param must_eat The number of times each philosopher must eat
 /// before the simulation ends
 /// @return The table created, or NULL if an error occured
-t_table	*setup_table(t_table_settings settings)
+t_table	*new_table(t_table_settings settings)
 {
 	t_table	*table;
 	size_t	i;
 
-	if (settings.n_philosophers < 1 || settings.tt_die < 1
-		|| settings.tt_eat < 1 || settings.tt_sleep < 1)
-		return (NULL);
 	table = malloc(sizeof(t_table));
 	if (!table)
 		return (NULL);
