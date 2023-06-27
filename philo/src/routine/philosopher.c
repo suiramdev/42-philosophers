@@ -23,8 +23,6 @@ static void	die_lonely(t_philosopher *philosopher, t_table *table)
 
 static bool	run_eat(t_philosopher *philosopher, t_table *table)
 {
-	if (!philosopher->neighbour_fork)
-		return (die_lonely(philosopher, table), false);
 	take_forks(philosopher);
 	log_action(philosopher, "is eating", YELLOW);
 	pthread_mutex_lock(&philosopher->mutex);
@@ -57,6 +55,8 @@ void	*philosopher_routine(void *arg)
 	table = philosopher->table;
 	p_usleep(table->t_start - now());
 	log_action(philosopher, "is thinking", BLUE);
+	if (!philosopher->neighbour_fork)
+		return (die_lonely(philosopher, table), NULL);
 	if (philosopher->id % 2)
 		p_usleep(table->settings.tt_eat / 10);
 	while (!should_stop(table))
