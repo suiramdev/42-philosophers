@@ -66,7 +66,7 @@ void	*philosopher_routine(void *arg)
 		if (!run_sleep(philosopher, table))
 			return (NULL);
 		log_action(philosopher, "is thinking", BLUE);
-		// p_usleep(table->settings.tt_eat / 50);
+		p_usleep(table->settings.tt_eat / 50);
 	}
 	return (NULL);
 }
