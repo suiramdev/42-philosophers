@@ -58,7 +58,7 @@ void	*philosopher_routine(void *arg)
 	if (!philosopher->neighbour_fork)
 		return (die_lonely(philosopher, table), NULL);
 	if (philosopher->id % 2)
-		p_usleep(table->settings.tt_eat / 10);
+		p_usleep(table->settings.tt_eat / 50);
 	while (!should_stop(table))
 	{
 		if (!run_eat(philosopher, table))
@@ -66,7 +66,7 @@ void	*philosopher_routine(void *arg)
 		if (!run_sleep(philosopher, table))
 			return (NULL);
 		log_action(philosopher, "is thinking", BLUE);
-		p_usleep(table->settings.tt_eat / 50);
+		// p_usleep(table->settings.tt_eat / 50);
 	}
 	return (NULL);
 }
