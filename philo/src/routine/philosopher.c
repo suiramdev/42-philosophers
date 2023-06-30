@@ -14,8 +14,8 @@
 
 static void	die_lonely(t_philosopher *philosopher, t_table *table)
 {
-	log_action(philosopher, "has taken a fork", WHITE);
-	log_action(philosopher, "died", RED);
+	log_action(philosopher, "has taken a fork");
+	log_action(philosopher, "died");
 	pthread_mutex_lock(&table->mutex);
 	table->stop = true;
 	pthread_mutex_unlock(&table->mutex);
@@ -24,7 +24,7 @@ static void	die_lonely(t_philosopher *philosopher, t_table *table)
 static bool	run_eat(t_philosopher *philosopher, t_table *table)
 {
 	take_forks(philosopher);
-	log_action(philosopher, "is eating", YELLOW);
+	log_action(philosopher, "is eating");
 	pthread_mutex_lock(&philosopher->mutex);
 	philosopher->t_meal = now();
 	pthread_mutex_unlock(&philosopher->mutex);
@@ -38,7 +38,7 @@ static bool	run_eat(t_philosopher *philosopher, t_table *table)
 
 static bool	run_sleep(t_philosopher *philosopher, t_table *table)
 {
-	log_action(philosopher, "is sleeping", MAGENTA);
+	log_action(philosopher, "is sleeping");
 	p_usleep(table->settings.tt_sleep);
 	return (true);
 }
@@ -54,7 +54,7 @@ void	*philosopher_routine(void *arg)
 	philosopher = (t_philosopher *)arg;
 	table = philosopher->table;
 	p_usleep(table->t_start - now());
-	log_action(philosopher, "is thinking", BLUE);
+	log_action(philosopher, "is thinking");
 	if (!philosopher->neighbour_fork)
 		return (die_lonely(philosopher, table), NULL);
 	if (philosopher->id % 2)
@@ -65,7 +65,7 @@ void	*philosopher_routine(void *arg)
 			return (NULL);
 		if (!run_sleep(philosopher, table))
 			return (NULL);
-		log_action(philosopher, "is thinking", BLUE);
+		log_action(philosopher, "is thinking");
 		p_usleep(table->settings.tt_eat / 50);
 	}
 	return (NULL);

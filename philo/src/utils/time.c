@@ -28,8 +28,12 @@ long long	now(void)
 void	p_usleep(long long ms)
 {
 	long long	start;
+	long long	delay;
 
+	delay = ms / 10;
+	if (delay <= 0)
+		delay = 1;
 	start = now();
 	while (now() < start + ms)
-		usleep(500);
+		usleep(delay);
 }

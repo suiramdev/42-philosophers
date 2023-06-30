@@ -23,6 +23,5 @@
 # include <pthread.h>
 
 # define WAITING_TIME 2000
-# define ENABLE_COLORS 0
 
 #endif

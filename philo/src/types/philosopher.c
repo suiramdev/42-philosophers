@@ -40,16 +40,16 @@ void	take_forks(t_philosopher *philosopher)
 	if (philosopher->id % 2)
 	{
 		pthread_mutex_lock(&philosopher->fork);
-		log_action(philosopher, "has taken a fork", WHITE);
+		log_action(philosopher, "has taken a fork");
 		pthread_mutex_lock(philosopher->neighbour_fork);
-		log_action(philosopher, "has taken a fork", WHITE);
+		log_action(philosopher, "has taken a fork");
 	}
 	else
 	{
 		pthread_mutex_lock(philosopher->neighbour_fork);
-		log_action(philosopher, "has taken a fork", WHITE);
+		log_action(philosopher, "has taken a fork");
 		pthread_mutex_lock(&philosopher->fork);
-		log_action(philosopher, "has taken a fork", WHITE);
+		log_action(philosopher, "has taken a fork");
 	}
 }
 

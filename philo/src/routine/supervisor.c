@@ -49,7 +49,7 @@ void	*supervisor_routine(void *arg)
 		while (philosopher)
 		{
 			if (table->settings.tt_die < now() - get_t_meal(philosopher))
-				return (log_action(philosopher, "died", RED),
+				return (log_action(philosopher, "died"),
 					stop(table), NULL);
 			if (table->settings.must_eat > 0
 				&& get_meals(philosopher) >= table->settings.must_eat)

@@ -12,17 +12,11 @@
 
 #include "philo.h"
 
-void	log_action(t_philosopher *philosopher, char *action, char *color)
+void	log_action(t_philosopher *philosopher, char *action)
 {
 	pthread_mutex_lock(&philosopher->table->mutex);
 	if (!philosopher->table->stop)
-	{
-		if (ENABLE_COLORS)
-			printf("%lld %zu %s%s%s\n", now() - philosopher->table->t_start,
-				philosopher->id, color, action, RESET);
-		else
-			printf("%lld %zu %s\n", now() - philosopher->table->t_start,
-				philosopher->id, action);
-	}
+		printf("%lld %zu %s\n", now() - philosopher->table->t_start,
+			philosopher->id, action);
 	pthread_mutex_unlock(&philosopher->table->mutex);
 }
